@@ -1,0 +1,5 @@
+<resources>
+
+    <!--Etiquetas para la sección de categorías -->
+    <string name="label_category_title">Categorías</string>
+</resources>
