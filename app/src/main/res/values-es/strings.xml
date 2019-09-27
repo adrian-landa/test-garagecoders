@@ -2,4 +2,8 @@
 
     <!--Etiquetas para la sección de categorías -->
     <string name="label_category_title">Categorías</string>
+    <string name="label_empty_result">No Elementos para Mostart</string>
+    <string name="template_title">Title: %1$s</string>
+    <string name="template_subtitle">Subtitle: %1$s</string>
+    <string name="template_year">Año: %1$d</string>
 </resources>
