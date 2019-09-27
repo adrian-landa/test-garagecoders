@@ -26,9 +26,10 @@ class MovieBottomsheetDialog : BottomSheetDialogFragment(), IView {
 
 
     companion object {
-        fun newInstance(items: List<UIMovie>): DialogFragment {
+        fun newInstance(category: String, items: List<UIMovie>): DialogFragment {
             val dialog: DialogFragment = MovieBottomsheetDialog()
             val arguments = Bundle()
+            arguments.putString(App.KEY_CATEGORY, category)
             arguments.putParcelableArrayList(App.KEY_ITEMS, ArrayList(items))
             dialog.arguments = arguments
             return dialog
@@ -60,9 +61,11 @@ class MovieBottomsheetDialog : BottomSheetDialogFragment(), IView {
                 )
             )
             val args = arguments
-            if (args!=null){
-                val list:List<UIMovie> =  args.getParcelableArrayList(App.KEY_ITEMS)
+            if (args != null) {
+                val list: List<UIMovie> = args.getParcelableArrayList(App.KEY_ITEMS)
+                val category: String = args.getString(App.KEY_CATEGORY, "")
                 adapter.submitList(list)
+                tvBelongingCategory.text = category
             }
         }
 

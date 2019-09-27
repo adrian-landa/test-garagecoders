@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,6 +45,7 @@ class CategoryFragment : Fragment(), IView,IRecyclerListener {
      * Method used to linking the view and setting the start value
      */
     override fun setData() {
+        setToolbar()
         context?.let { ctx ->
             val adapter = CategoryAdapter(this)
             recyclerResult.adapter = adapter
@@ -102,6 +104,13 @@ class CategoryFragment : Fragment(), IView,IRecyclerListener {
     override fun onDestroyView() {
         super.onDestroyView()
         recyclerResult.invalidateItemDecorations()
+    }
+
+    /**
+     * Method used to sync the layout toolbar with the actionbar.
+     */
+    private fun setToolbar() {
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }
 
 

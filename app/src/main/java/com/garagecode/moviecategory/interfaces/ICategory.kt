@@ -1,5 +1,6 @@
 package com.garagecode.moviecategory.interfaces
 
+import com.garagecode.moviecategory.data.remote.interfaces.IWebErrorListener
 import com.garagecode.moviecategory.ui.models.UICategory
 
 /**
@@ -15,8 +16,14 @@ interface ICategory {
         fun getCategories()
 
         /**
-         * Method used to open the list of category belonging movies
+         * Method used to open the list of movies belonging to category
          */
-        fun onCategorySelected(category:UICategory)
+        fun onCategorySelected(category: UICategory)
+    }
+
+    interface RequestListener : IWebErrorListener {
+        fun onCategoryResponse(
+            payload: List<UICategory>?
+        )
     }
 }

@@ -41,6 +41,8 @@
     <TextView
             android:id="@+id/tvMovieSubtitle"
             style="@style/Body1"
+            android:layout_width="@dimen/dimen_adjustable"
+            android:textAlignment="center"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="@id/guideV50"
             app:layout_constraintTop_toBottomOf="@id/tvMovieTitle"

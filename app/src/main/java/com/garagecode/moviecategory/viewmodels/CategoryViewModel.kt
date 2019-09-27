@@ -4,20 +4,16 @@ import android.content.Context
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.garagecode.moviecategory.data.entities.Movie
+import com.garagecode.moviecategory.data.remote.implementations.ServiceMovie
+import com.garagecode.moviecategory.data.remote.interfaces.IServiceMovie
+import com.garagecode.moviecategory.enums.ExceptionType
 import com.garagecode.moviecategory.ui.models.UICategory
 import com.garagecode.moviecategory.interfaces.ICategory
-import com.garagecode.moviecategory.ui.models.UIMovie
 import com.garagecode.moviecategory.ui.movies.MovieBottomsheetDialog
 import com.garagecode.moviecategory.util.WrapperEvent
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 
-class CategoryViewModel(context: Context) : ViewModel(), ICategory.UseCases {
-
+class CategoryViewModel(context: Context) : ViewModel(), ICategory.UseCases, ICategory.RequestListener {
 
 
     val loading: MutableLiveData<Boolean> = MutableLiveData()
@@ -25,34 +21,41 @@ class CategoryViewModel(context: Context) : ViewModel(), ICategory.UseCases {
     val movieDialog: MutableLiveData<WrapperEvent<DialogFragment>> = MutableLiveData()
     val webError: MutableLiveData<WrapperEvent<String>> = MutableLiveData()
     private val disposable = CompositeDisposable()
-    private val job = Job()
-    private val mainThread = CoroutineScope(job + Dispatchers.Main)
-    private val ioThread = CoroutineScope(job + Dispatchers.IO)
+    private val remote: IServiceMovie = ServiceMovie(context, disposable)
 
     /**
      * Method used to fetch the available categories
      */
     override fun getCategories() {
         loading.value = true
-        val result: ArrayList<UICategory> = ArrayList()
-        result.add(UICategory(id = 0, name = "Comedy", color = "#5062d4",
-            movies = listOf(UIMovie("Volver al futuro","01",2000))))
-        result.add(UICategory(id = 1, name = "Drama", color = "#b54d26",
-            movies = listOf(UIMovie("Volver al futuro 02","02",2000))))
-        result.add(UICategory(id = 2, name = "Western", color = "#38c499",
-            movies = listOf(UIMovie("Volver al futuro 063","01",2000))))
-        categories.value = result
-        loading.value = false
+        remote.getCategories(
+            onResponse = this::onCategoryResponse,
+            onException = this::handleException
+        )
     }
 
     /**
-     * Method used to open the list of category belonging movies
+     * Method used to open the list of movies belonging to category
      */
     override fun onCategorySelected(category: UICategory) {
-        val dialog = MovieBottomsheetDialog.newInstance(category.movies)
+        val dialog = MovieBottomsheetDialog.newInstance(category = category.name, items = category.movieList)
         movieDialog.value = WrapperEvent(dialog)
     }
 
+    override fun onCategoryResponse(payload: List<UICategory>?) {
+        categories.value = payload ?: ArrayList()
+        loading.value = false
+    }
+
+    override fun handleException(type: ExceptionType, code: Int?, message: String?) {
+        loading.value = false
+        webError.value = WrapperEvent(message ?: "Error Web")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.dispose()
+    }
 
 
 }
